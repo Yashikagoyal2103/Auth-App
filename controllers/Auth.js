@@ -1,4 +1,4 @@
-const bcrypt =require('bcrypt');
+const bcrypt = require('bcrypt');
 const User =require('../model/User.js');
 const jwt =require('jsonwebtoken');
 require('dotenv').config();
@@ -81,7 +81,8 @@ exports.login =async (req,res) => {
     }
     //password varification and jwt token generation
     if(await bcrypt.compare(password , user.password)){
-        const token = jwt.sign( payload ,process.env.JWT_SECRET, process.env.JWT_EXPIRY);
+        const token = jwt.sign( payload ,process.env.JWT_SECRET, {
+            expiresIn :process.env.JWT_EXPIRY});
         user.token =token;
         user.password =undefined;
 
@@ -105,6 +106,7 @@ exports.login =async (req,res) => {
     }
 
     }catch(err) {
+        console.error("Login Error:", err);
         res.status(500).json({
             success:false,
             message:'Internal server error'
